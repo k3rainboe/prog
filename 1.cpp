@@ -1,166 +1,257 @@
+/*
+  Beginning with an empty binary search tree, Construct binary search tree by inserting the values in the order given. 
+  After constructing a binary tree - 
+  i. Insert new node 
+  ii. Find number of nodes in longest path  
+  iii. Minimum data value found in the tree  
+  iv. Change a tree so that the roles of the left and right pointers are swapped at every node  
+  v.  Search a value
+*/
+
 #include<iostream>
-#include<graphics.h>
+#include<cstdlib>
 using namespace std;
- 
-int xmid, ymid; 
- 
-class pixel
+
+class node
 {
- 
-	public:
-		float x,y,length,dx,dy;
-		int p,i;
- 
+  public:
+       int data;
+       node *left;
+       node *right;
 };
- 
-class pixel1:public pixel
+
+class bst
 {
-	public:		
-		void DDA(float,float,float,float);
-		void bresen(float,float,float,float);
-		int sign(float);
-	
+ public:
+       node *root;
+ 
+       bst()
+       {
+       root=NULL;
+       }
+ 
+       void insert();
+       void inorder(node *);
+       void preorder(node *);
+       void postorder(node *);
+       void lowest(node *);  
+       void greatest(node *);
+       void search(node *,int);
+       int height(node *);
+       void mirror(node *);
 };
- 
- 
- 
- 
-int pixel1::sign(float x)
+
+void bst::insert()
 {
-	if(x<0)
-	return -1;
-	else if(x=0)
-	return 0;
-	else 
-	return 1;
-}	
+       node *newnode=new node();
+       node *current;
+  
+       cout<<"enter data : ";
+       cin>>newnode->data;
+       newnode->left=newnode->right=NULL;
  
-void pixel1::DDA(float x1,float y1,float x2,float y2)
-{
-	dx=abs(x2-x1);
-	dy=abs(y2-y1);
- 
-	if(dx>dy)
-	length=dx;
-	else
-	length=dy;
-	
-	dx=(x2-x1)/length;
-	dy=(y2-y1)/length;
-	
-	x=x1+0.5*sign(dx);
-	y=y1+0.5*sign(dy);
-	
-	for(int i=0;i<length;i++)
-	{
-	x=x+dx;
-	y=y+dy;
- 
-	putpixel(xmid+x,ymid-y,WHITE);
- 
-	}
+       if(root==NULL)
+       root=newnode;
+       else
+       {
+         current=root;
+   
+       while(current!=NULL)
+       {
+         if(newnode->data<current->data)
+          {   
+            if(current->left==NULL)
+              {
+                current->left=newnode;
+                break;
+              }
+            else
+         current=current->left;
+     }
+     else if(newnode->data>current->data)
+     {
+       if(current->right==NULL)
+         {
+          current->right=newnode;
+          break;
+         }
+       else
+         current=current->right;       
+     }  
+   }
+ }
 }
- 
-void pixel1::bresen(float x1,float y1,float x2,float y2)
-{
-	int s1, s2, ex, e=0;
-	float temp;
-	dx=abs(x2-x1);
-	dy=abs(y2-y1);
-	x=x1;
-	y=y1;
-	
-	if(x2 > x1) 
-		s1=1;             
-    if(x2 < x1)
-        s1=-1;
-	if(x2 == x1)
-    	s1=0;
-              
-    if(y2 > y1)
-    	s2=1;             
-    if(y2 < y1)
-        s2=-1;
-	if(y2 == y1)
-    	s2=0;
-             
-             if(dy > dx)
-             {
-                temp = dx;
-                dx = dy;
-                dy = temp;
-                ex = 1;
-             }
-             e=2*dy-dx; 
-             i=1;
-             do
-             {
-                  while(e>=0)
-                  {
-                     if(ex==1)
-                        x = x + s1;
-                     else
-                        y = y + s2;
-                     e = e - 2*dx;
-                  }
-                  if(ex==1)
-                     y = y + s2;
-                  else
-                     x = x + s1;
-                  e = e + 2*dy;
-                  i = i + 1;
-                 putpixel(xmid+x,ymid-y,WHITE); 
-           }while(i<=dx);
+
+void bst::inorder(node *current)
+{ 
+  if(current!=NULL)
+  {
+  inorder(current->left);
+  cout<<current->data<<" ";
+  inorder(current->right);
+  }
 }
- 
+
+void bst::preorder(node *current)
+{ 
+  if(current!=NULL)
+  {
+  cout<<current->data<<" ";
+  inorder(current->left);
+  inorder(current->right);
+  }
+}
+
+void bst::postorder(node *current)
+{ 
+  if(current!=NULL)
+  {
+  inorder(current->left);
+  inorder(current->right);
+  cout<<current->data<<" ";
+  }
+}
+
+void bst::lowest(node *current)
+{ 
+  if(current!=NULL)
+  {
+  while(current->left!=NULL)
+  current=current->left;
+  cout<<"\nlowest : "<<current->data;
+  }
+  else
+  	cout<<"\nno lowest element !!!";
+}
+
+void bst::greatest(node *current)
+{
+  if(current!=NULL)
+  {
+  while(current->right!=NULL)
+  current=current->right;
+  cout<<"\ngreatest : "<<current->data;
+  }
+  else
+  	cout<<"\nno greatest element !!!";
+}
+
+void bst::search(node *current,int key)
+{
+  if(current==NULL)
+  cout<<"\nElement not present !!!!";
+  else if(key==current->data)
+  cout<<"\nelement is present";
+  else if(key<current->data)
+  search(current->left,key);
+  else if(key>current->data)
+  search(current->right,key);
+}
+
+int bst::height(node *R)
+{
+  int lheight,rheight;
+  if(R==NULL)
+  return 0;
+  if(R->left==NULL && R->right==NULL)
+  return 0;
+  
+  lheight=height(R->left);
+  rheight=height(R->right);
+  
+  if(rheight>lheight)
+         return (rheight+1);
+  else
+         return (lheight+1);
+
+}
+
+void bst::mirror(node *R)
+{
+  node *temp;
+    if(R!=NULL)
+      {
+        temp=R->left;
+        R->left=R->right;
+        R->right=temp;
+        mirror(R->left);
+        mirror(R->right);
+      }
+}
+
 int main()
 {
-	int gd=DETECT,gm;
-	initgraph(&gd,&gm,NULL);
-	
-	xmid=getmaxx()/2;
-	ymid=getmaxy()/2;
-	
-	line(0, ymid, getmaxx(), ymid);
-	line(xmid, 0, xmid, getmaxy());
-	
-	pixel1 s;
-	float x1,y1,x2,y2;
-	char ans;
-	int ch;
+   int ch=1,ch0;
+   int key,ht;
+   bst obj;
  
-	
- 
-	do
-	{
-	cout<<"\n****MENU****";
-	cout<<"\n1.DDA ";
-	cout<<"\n2.Bresenham ";
-	cout<<"\n3.Exit ";
-	cin>>ch;
- 
-	switch(ch)
-	{
-		case 1: cout<<"\nEnter co-ordinates of line(x1,y1,x2,y2)";
-			cin>>x1>>y1>>x2>>y2;
-			s.DDA(x1,y1,x2,y2);
-			break;
-	
-		case 2: cout<<"\nEnter co-ordinates of line(x1,y1,x2,y2)";
-			cin>>x1>>y1>>x2>>y2;
-			s.bresen(x1,y1,x2,y2);
-			break;
- 
-		case 3: 
-			break;
- 
-	}
-	cout<<"\nDo u want to continue...(y/n)";
-	cin>>ans;
-	}while(ans=='y');
- 
- 
-	delay(10000);
-	closegraph();
- 
+   do
+   {
+       cout<<"\n*****************MENU********************";
+       cout<<"\n1.insert\n2.inorder\n3.preorder\n4.postorder\n5.lowest\n6.greatest\n7.search\n8.height\n9.mirror\n10.exit";
+       cout<<"\n*****************************************\n";
+       cin>>ch0;
+       switch(ch0)
+       {
+              case 1:
+                     while(ch)
+                     { 
+                            cout<<"Do you want to enter(1/0) : ";
+                            cin>>ch;
+                            if(ch)
+                            obj.insert();
+                      }
+              break;
+    
+              case 2:
+                            cout<<"\ninorder : ";
+                            obj.inorder(obj.root);
+              break;
+     
+              case 3:
+                            cout<<"\npreorder : ";
+                            obj.preorder(obj.root);
+              break;
+              
+              case 4:
+                            cout<<"\npostorder : ";
+                            obj.postorder(obj.root);
+              break;
+              
+              case 5:
+                            obj.lowest(obj.root);
+              break;
+              
+              case 6:
+                            obj.greatest(obj.root);       
+              break;
+              
+              case 7:
+                            cout<<"\nEnter data to search : ";
+                            cin>>key;
+                            obj.search(obj.root,key);
+              break;
+              
+              case 8:
+                            ht=obj.height(obj.root);
+                            cout<<"\nheight of tree : "<<ht;
+              break;
+              
+              case 9:
+                            cout<<"\nBefore mirror ";
+                            cout<<"\ninorder : ";
+                            obj.inorder(obj.root);
+                            obj.mirror(obj.root);
+                            cout<<"\nafter mirror ";
+                            cout<<"\ninorder : ";
+                            obj.inorder(obj.root);
+                            
+              break;
+              
+              case 10:
+              exit(0);              
+        }
+       
+    }while(1);
+
 }

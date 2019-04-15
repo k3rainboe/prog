@@ -1,389 +1,263 @@
-//Write program to implement Cohen Sutherland Hodgman algorithm to clip any polygon. Provide the vertices of the polygon to be clipped and pattern of clipping interactively.
+/*
+To create ADT that implements the SET concept. 
+a. Add (newElement) -Place a value into the set   
+b. Remove (element) Remove the value  
+c. Contains (element) Return true if element is in collection  
+d. Size () Return number of values in collection Iterator () Return an iterator used to loop over collection 
+e. Intersection  of two sets, 
+f. Union of two sets,  
+g. Difference between two sets, 
+h. Subset 
+*/
 
-#include<graphics.h>
 #include<iostream>
 using namespace std;
-typedef struct
-{
-	float x;
-	float y;
-}pt;
-int n;
-void top(pt,pt[],pt[]);
-void bottom(pt,pt[],pt[]);
-void left(pt,pt[],pt[]);
-void right(pt,pt[],pt[]);
 
+class set
+{
+   public:
+   int a[10],cnt;
+   set()
+   {
+      cnt=0;
+   }
+   
+   void add();
+   void remove();
+   void search(int key);
+   void size();  
+   void display();
+};
+
+void set::add()
+{
+   if(cnt!=10)
+   {
+   cout<<"\nEnter element : ";
+   cin>>a[cnt];
+      cnt++;
+   }
+   else
+   cout<<"\nSpace not available !!!!!";
+}
+
+void set::remove()
+{
+   if(cnt>0)
+   {
+   cout<<"\nDeleted Element is : "<<a[--cnt];
+   cnt++;//only for restoring 
+   cnt--;
+   }
+   else
+   cout<<"\nSet is empty !!!!";
+}
+
+void set::display()
+{
+    cout<<"\nSet = ";
+    for(int i=0;i<cnt;i++)
+        cout<<a[i]<<" ";
+    
+}
+
+void set::search(int key)
+{
+   for(int i=0;i<cnt;i++)
+   {
+       if(a[i]==key)
+       {
+          cout<<"\nElement found at location :"<<++i;
+          break;
+       }
+   }
+}
+
+void set::size()
+{
+//   int size=cnt+1;
+   cout<<"\nSize of set is :"<<cnt;
+}
+
+class set_op
+{
+   public:
+      int c[10];
+
+    void Union(int [],int,int [],int);
+    void Intersect(int [],int,int [],int);
+    void difference(int [],int,int [],int);
+    void subset(int [],int,int [],int);
+
+};
+
+void set_op::Union(int a[10],int cnt1,int b[10],int cnt2)
+{
+           int i,j,flag=0,cnt3;
+
+           for(cnt3=0;cnt3<cnt1;cnt3++)
+           c[cnt3]=a[cnt3];
+           
+           for(i=0;i<cnt2;i++)
+           {
+           	   for(j=0;j<cnt1;j++)
+           	   {
+           	   	   if(b[i]==c[j])
+           	   	   flag=1;
+           	   }
+
+           	   if(flag==0)
+           	   {
+           	   	c[cnt3]=b[i];
+                cnt3++;
+           	   }
+           	   flag=0;
+           }   
+           cout<<"Union of sets is : ";
+           for(i=0;i<cnt3;i++)
+           	cout<<" "<<c[i];
+}
+
+void set_op::Intersect(int a[10],int cnt1,int b[10],int cnt2)
+{
+	int i,j,cnt3=0;
+
+	for(i=0;i<cnt1;i++)
+	{
+		for(j=0;j<cnt2;j++)
+		{
+			if(a[i]==b[j])
+			{
+				c[cnt3]=a[i];
+				cnt3++;
+			}
+		}
+	}
+    cout<<"Intersection of sets is : ";
+	for(i=0;i<cnt3;i++)
+		cout<<" "<<c[i];
+}
+
+void set_op::difference(int a[10],int cnt1,int b[10],int cnt2)
+{
+	int i,j,cnt3=0,flag;
+	
+	for(i=0;i<cnt1;i++)
+	{
+		flag=0;
+		for(j=0;j<cnt2;j++)
+		{
+			if(a[i]==b[j])
+			{
+              flag=1;
+			}
+		}
+		if(flag==0)
+		{
+		c[cnt3]=a[i];
+		cnt3++;
+		}
+	}		
+        cout<<"Difference of set A and B is : ";
+		for(i=0;i<cnt3;i++)
+		cout<<" "<<c[i];
+}
+
+void set_op::subset(int a[10],int cnt1,int b[10],int cnt2)
+{
+	int i,j,flag=0;
+	
+	for(i=0;i<cnt1;i++)
+	{
+		for(j=0;j<cnt2;j++)
+		{
+			if(a[i]==b[j])
+			{
+				flag=1;
+				break;
+			}
+			else 
+				flag=0;
+		}
+	}		
+    
+    cout<<"A is a subset of B";
+}
 
 int main()
 {
-        //Variable Declarations
-        int gd=DETECT,gm=VGAMAX;
-        int i,j,xmax,ymax,xmid,ymid;
-        pt d,p1,p2,p[20],pi1,pi2,pp[20];
-
-        cout<<"\n Enter cordinates (left,top)";
-	cout<<"\n Enter X cordinates :";
-	cin>>p1.x;
-	cout<<"\n Enter Y cordinates :";
-	cin>>p1.y;
-	cout<<"\n Enter cordinates (right,bottom)"; 
-	cout<<"\n Enter X cordinates :"; 
-	cin >>p2.x;
-	cout<<"\n Enter Y cordinates :"; 
-	cin>>p2.y;
-
-	cout<<"Enter number of vertex=";
-	cin>>n;
-
-	for(i=0;i<n;i++)
-	{
-		cout<<"\n Enter cordinates of vertex :";
-		cout<<i+1;
-		cout<<"\n Enter X cordinates :";
-		cin>>p[i].x;
-		cout<<"\n Enter Y cordinates :";
-		cin>>p[i].y;
-	}
-	p[i].x=p[0].x;
-	p[i].y=p[0].y;
-      
-        initgraph(&gd,&gm,NULL);
-        xmax = getmaxx();
-        ymax = getmaxy();
-        xmid = xmax /2;
-        ymid = ymax /2;
-
-        line(xmid,0,xmid,ymax); //Y-Axis
-        line(0,ymid,xmax,ymid); //X-Axis 
- 
-        //Draw Original Object      
-        for(i=0;i<n-1;i++)
+    int ch,key;
+    set a,b;
+    set_op c;
+    do
+    {
+        
+        cout<<"\nMenu\n\nFOR SET A\n1. Add element\n2. Remove\n3. Search\n4. Size\n5. Display\n\nFOR SET B\n6. Add element\n7. Remove\n8. Search\n9. Size\n10. Display\n\n11. Union\n12. Intersect\n13. Difference between set A and B\n14. Subset\n15. Exit\nEnter choice :";
+        cin>>ch;
+        switch(ch)
         {
-		line(p[i].x,p[i].y,p[i+1].x,p[i+1].y);
+           case 1:
+             a.add();
+           break;
+           
+           case 2:
+             a.remove();
+           break;
+           
+           case 3:
+              cout<<"\nEnter key : ";
+              cin>>key;
+              a.search(key);
+           break;
+           
+           case 4:
+              a.size();
+           break;
+
+           case 5:
+              a.display();
+           break;
+
+           case 6:
+             b.add();
+           break;
+           
+           case 7:
+             b.remove();
+           break;
+           
+           case 8:
+              cout<<"\nEnter key : ";
+              cin>>key;
+              b.search(key);
+           break;
+           
+           case 9:
+              b.size();
+           break;
+           
+           case 10:
+              b.display();
+           break;
+
+           case 11:
+              c.Union(a.a,a.cnt,b.a,b.cnt);
+           break;
+
+           case 12:
+              c.Intersect(a.a,a.cnt,b.a,b.cnt);
+           break;
+
+           case 13:
+              c.difference(a.a,a.cnt,b.a,b.cnt);
+           break;
+
+           case 14:
+              c.subset(a.a,a.cnt,b.a,b.cnt);
+           break;
         }
-        line(p[i].x,p[i].y,p[0].x,p[0].y);
-
-        rectangle(p1.x,p1.y,p2.x,p2.y);
-
-        left(p1,p,pp);
-        right(p2,p,pp);
-        top(p1,p,pp);
-        bottom(p2,p,pp);
-
-       cleardevice();
-         
-        //Draw Original Object      
-        for(i=0;i<n-1;i++)
-        {
-		line(p[i].x,p[i].y,p[i+1].x,p[i+1].y);
-        }
-        line(p[i].x,p[i].y,p[0].x,p[0].y);
       
-        rectangle(p1.x,p1.y,p2.x,p2.y);
-   
-        delay(30000);
-        closegraph();
-        return 0;
+    }while(ch!=15);
+
 }
 
-
-
-void left(pt p1,pt p[20],pt pp[20])
-{
-	int i,j=0;
-       	for(i=0;i<n;i++)
-	{
-             	if(p[i].x<p1.x && p[i+1].x>=p1.x)
-		{
-                       	if(p[i+1].x-p[i].x!=0)
-			{
-			pp[j].y=(p[i+1].y-p[i].y)/(p[i+1].x-p[i].x)*(p1.x-p[i].x)+p[i].y;
-			}
-			else
-			{	
-				pp[j].y=p[i].y;
-			}
-			pp[j].x=p1.x;
-			j++;
-			pp[j].x=p[i+1].x;
-			pp[j].y=p[i+1].y;
-			j++;
-		}
-		if(p[i].x>p1.x && p[i+1].x>=p1.x)
-		{   
-			pp[j].y=p[i+1].y;
-			pp[j].x=p[i+1].x;
-			j++;
-		}
-		if(p[i].x>p1.x && p[i+1].x<=p1.x)
-		{    
-			if(p[i+1].x-p[i].x!=0)
-			{
-				pp[j].y=(p[i+1].y-p[i].y)/(p[i+1].x-p[i].x)*(p1.x-p[i].x)+p[i].y;
-			}
-			else
-			{
-				pp[j].y=p[i].y;
-			}
-			pp[j].x=p1.x;
-			j++;
-		}
-	}
- 
-        cout<<"\n\nModified Points at the end of Left Edge:\n";
-	for(i=0;i<j;i++)
-	{
-		p[i].x=pp[i].x;
-		p[i].y=pp[i].y;
-                cout<<"\np["<<i<<"]: x="<<p[i].x<<" and y="<<p[i].y;
-	}
-	p[i].x=pp[0].x;
-	p[i].y=pp[0].y;
-	n=j;		
-}
-
-void right(pt p2,pt p[20],pt pp[20])
-{
-	int i,j=0;
-	for(i=0;i<n;i++)
-	{
-		if(p[i].x>p2.x && p[i+1].x<=p2.x)
-		{
-                       	if(p[i+1].x-p[i].x!=0)
-			{
-				pp[j].y=(p[i+1].y-p[i].y)/(p[i+1].x-p[i].x)*(p2.x-p[i].x)+p[i].y;
-			}
-			else
-			{
-				pp[j].y=p[i].y;
-			}
-			pp[j].x=p2.x;
-			j++;
-			pp[j].x=p[i+1].x;
-			pp[j].y=p[i+1].y;
-			j++;
-		}
-		if(p[i].x<p2.x && p[i+1].x<=p2.x)
-		{
-                        pp[j].y=p[i+1].y;
-			pp[j].x=p[i+1].x;
-			j++;
-		}
-		if(p[i].x<p2.x && p[i+1].x>=p2.x)
-		{
-                        if(p[i+1].x-p[i].x!=0)
-			{
-				pp[j].y=(p[i+1].y-p[i].y)/(p[i+1].x-p[i].x)*(p2.x-p[i].x)+p[i].y;
-			}
-			else
-			{
-				pp[j].y=p[i].y;
-			}
-			pp[j].x=p2.x;
-			j++;
-		}
-	}
-
-        cout<<"\n\nModified Points at the end of Right Edge:\n";
-	for(i=0;i<j;i++)
-	{
-		p[i].x=pp[i].x;
-		p[i].y=pp[i].y;
-                cout<<"\np["<<i<<"]: x="<<p[i].x<<" and y="<<p[i].y;
-                
-	}
-	p[i].x=pp[0].x;
-	p[i].y=pp[0].y;
-	n=j;		
-}
-void top(pt p1,pt p[20],pt pp[20])
-{
-	int i,j=0;
-	for(i=0;i<n;i++)
-	{
-              	if(p[i].y<p1.y && p[i+1].y>=p1.y)
-		{
-                      	if(p[i+1].y-p[i].y!=0)
-			{
-				pp[j].x=(p[i+1].x-p[i].x)/(p[i+1].y-p[i].y)*(p1.y-p[i].y)+p[i].x;
-				
-			}
-			else
-			{
-				pp[j].x=p[i].x;
-			}
-			pp[j].y=p1.y;
-			j++;
-			pp[j].x=p[i+1].x;
-			pp[j].y=p[i+1].y;
-			j++;
-		}
-		if(p[i].y>p1.y && p[i+1].y>= p1.y)
-		{
-                      	pp[j].y=p[i+1].y;
-			pp[j].x=p[i+1].x;
-			j++;
-		}
-		if(p[i].y>p1.y && p[i+1].y<= p1.y)
-		{
-                    	if(p[i+1].y-p[i].y!=0)
-			{
-				pp[j].x=(p[i+1].x-p[i].x)/(p[i+1].y-p[i].y)*(p1.y-p[i].y)+p[i].x;
-			}
-			else
-			{
-				pp[j].x=p[i].x;
-			}
-			pp[j].y=p1.y;
-			j++;
-		}
-	}
-
-        cout<<"\n\nModified Points at the end of Top Edge:\n";
-	for(i=0;i<j;i++)
-	{
-		p[i].x=pp[i].x;
-		p[i].y=pp[i].y;	
-                cout<<"\np["<<i<<"]: x="<<p[i].x<<" and y="<<p[i].y;
-	}
-	p[i].x=pp[0].x;
-	p[i].y=pp[0].y;
-	n=j;
-}
-
-void bottom(pt p2,pt p[20],pt pp[20])
-{
-	int i,j=0;
-	for(i=0;i<n;i++)
-	{
-		if(p[i].y>p2.y && p[i+1].y <= p2.y)
-		{
-			if(p[i+1].y-p[i].y!=0)
-			{
-				pp[j].x=(p[i+1].x-p[i].x)/(p[i+1].y-p[i].y)*(p2.y-p[i].y)+p[i].x;	
-			}
-			else
-			{
-				pp[j].x=p[i].x;
-			}
-			pp[j].y=p2.y;
-			j++;
-			pp[j].x=p[i+1].x;
-			pp[j].y=p[i+1].y;
-			j++;
-		}
-		if(p[i].y<p2.y && p[i+1].y <= p2.y)
-		{
-			pp[j].y=p[i+1].y;
-			pp[j].x=p[i+1].x;
-			j++;
-		}
-		if(p[i].y<p2.y && p[i+1].y >= p2.y)
-		{
-			if(p[i+1].y-p[i].y!=0)
-			{
-				pp[j].x=(p[i+1].x-p[i].x)/(p[i+1].y-p[i].y)*(p2.y-p[i].y)+p[i].x;	
-			}
-			else
-			{
-				pp[j].x=p[i].x;
-			}
-			pp[j].y=p2.y;
-			j++;
-		}
-	}
-        cout<<"\n\nModified Points at the end of Bottom Edge:\n";
-	for(i=0;i<j;i++)
-	{
-		p[i].x=pp[i].x;
-		p[i].y=pp[i].y;
-                cout<<"\np["<<i<<"]: x="<<p[i].x<<" and y="<<p[i].y;
-	}
-	p[i].x=pp[00].x;
-	p[i].y=pp[00].y;
-	n=j;
-}
-
-
-/*Output
-
-gescoe@gescoe-OptiPlex-3020:~/Desktop$ g++ 9.cpp -lgraph
-gescoe@gescoe-OptiPlex-3020:~/Desktop$ ./a.out
-
- Enter cordinates (left,top)
- Enter X cordinates :50
-
- Enter Y cordinates :50
-
- Enter cordinates (right,bottom)
- Enter X cordinates :150
-
- Enter Y cordinates :150
- Enter number of vertex=4
-
- Enter cordinates of vertex :1
- Enter X cordinates :30
-
- Enter Y cordinates :100
-
- Enter cordinates of vertex :2
- Enter X cordinates :100
-
- Enter Y cordinates :20
-
- Enter cordinates of vertex :3
- Enter X cordinates :180
-
- Enter Y cordinates :100
-
- Enter cordinates of vertex :4
- Enter X cordinates :100
-
- Enter Y cordinates :180
-
-
-Modified Points at the end of Left Edge:
-
-p[0]: x=50 and y=77.1429
-p[1]: x=100 and y=20
-p[2]: x=180 and y=100
-p[3]: x=100 and y=180
-p[4]: x=50 and y=122.857
-
-Modified Points at the end of Right Edge:
-
-p[0]: x=100 and y=20
-p[1]: x=150 and y=70
-p[2]: x=150 and y=130
-p[3]: x=100 and y=180
-p[4]: x=50 and y=122.857
-p[5]: x=50 and y=77.1429
-
-Modified Points at the end of Top Edge:
-
-p[0]: x=130 and y=50
-p[1]: x=150 and y=70
-p[2]: x=150 and y=130
-p[3]: x=100 and y=180
-p[4]: x=50 and y=122.857
-p[5]: x=50 and y=77.1429
-p[6]: x=73.75 and y=50
-
-Modified Points at the end of Bottom Edge:
-
-p[0]: x=150 and y=70
-p[1]: x=150 and y=130
-p[2]: x=130 and y=150
-p[3]: x=73.75 and y=150
-p[4]: x=50 and y=122.857
-p[5]: x=50 and y=77.1429
-p[6]: x=73.75 and y=50
-[xcb] Unknown sequence number while processing queue
-[xcb] Most likely this is a multi-threaded client and XInitThreads has not been called
-[xcb] Aborting, sorry about that.
-a.out: ../../src/xcb_io.c:274: poll_for_event: Assertion `!xcb_xlib_threads_sequence_lost' failed.
-p[7]: x=130 and y=50gescoe@gescoe-OptiPlex-3020:~/Desktop$ 
-
-
-*/
