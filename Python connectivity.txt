@@ -1,0 +1,229 @@
+/*PROBLAM STATEMENT
+Implement MYSQL database connectivity with python Implement 
+Database navigation operations (add, delete, edit,) using ODBC/JDBC.
+
+Name:Arpita Anil Devargaonkar.
+RollNo:34
+Class:TE_A
+
+*/
+
+#!/usr/bin/python
+
+import MySQLdb
+
+# Open database connection
+db = MySQLdb.connect("192.168.2.232","root","A1234","collage" )
+# prepare a cursor object using cursor() method
+cursor = db.cursor()
+
+
+ex=True
+
+while(ex):
+
+     print("1.Create table: ")
+     print("2.Insert: ")
+     print("3.Show: ")
+     print("4.Update: ")
+     print("5.delete: ")
+     print("6.Exit")
+
+     ch=int(raw_input("Enter your choice: "))
+
+     if(ch==1):
+          sql = """CREATE TABLE EMPLOYEE (
+              FIRST_NAME  CHAR(20) NOT NULL,
+              LAST_NAME  CHAR(20),
+              AGE INT,  
+              SEX CHAR(20),
+              INCOME FLOAT )"""
+
+          cursor.execute(sql)
+          db.close()
+          
+     elif(ch==2):
+          fn=raw_input("Enter first name: ")
+          ln=raw_input("Enter last name: ")
+          ag=int(input("Enter age: "))
+          se=raw_input("Enter sex: ")
+          inc=int(input("Enter income: "))
+
+          # Prepare SQL query to INSERT a record into the database.
+          sql = "INSERT INTO EMPLOYEE(FIRST_NAME, \
+                 LAST_NAME, AGE, SEX, INCOME) \
+                 VALUES ('%s', '%s', '%d', '%s', '%d' )" % \
+                 (fn, ln, ag, se, inc)
+          try:
+             # Execute the SQL command
+             cursor.execute(sql)
+             # Commit your changes in the database
+             db.commit()
+          except:
+             # Rollback in case there is any error
+             db.rollback()
+
+          # disconnect from server
+          #db.close()
+         
+     elif(ch==3):
+          sql = "SELECT * FROM EMPLOYEE \
+                 WHERE INCOME > '%d'" % (1000)
+          try:
+             # Execute the SQL command
+             cursor.execute(sql)
+             # Fetch all the rows in a list of lists.
+             results = cursor.fetchall()
+             for row in results:
+                fname = row[0]
+                lname = row[1]
+                age = row[2]
+                sex = row[3]
+                income = row[4]
+                # Now print fetched result
+                print "fname=%s,lname=%s,age=%d,sex=%s,income=%d" % \
+                       (fname, lname, age, sex, income )
+          except:
+             print "Error: unable to fecth data"
+
+          # disconnect from server
+         # db.close()
+          
+     elif(ch==4):
+          # Prepare SQL query to UPDATE required records
+          sql = "UPDATE EMPLOYEE SET AGE = AGE + 1 WHERE SEX = '%c'" % ('M')
+          try:
+             # Execute the SQL command
+             cursor.execute(sql)
+             # Commit your changes in the database
+             db.commit()
+          except:
+             # Rollback in case there is any error
+             
+             db.rollback()
+
+          # disconnect from server
+         # db.close()
+          
+          
+     elif(ch==5):     
+          # Prepare SQL query to DELETE required records
+          sql = "DELETE FROM EMPLOYEE WHERE AGE = '%d'" % (20)
+          try:
+             # Execute the SQL command
+             cursor.execute(sql)
+             # Commit your changes in the database
+             db.commit()
+          except:
+             # Rollback in case there is any error
+             db.rollback()
+
+          # disconnect from server
+         # db.close()
+     else:
+          db.close()
+          ex=False
+          
+          
+/*OUTPUT
+          
+'''gescoe@gescoe-OptiPlex-3010:~/Desktop$ python if.py 
+1.Create table: 
+2.Insert: 
+3.Show: 
+4.Update: 
+5.delete: 
+6.Exit 
+Enter your choice: 1 
+
+
+1.Create table: 
+2.Insert: 
+3.Show: 
+4.Update: 
+5.delete: 
+6.Exit 
+
+Enter your choice: 2 
+Enter first name: Akshata
+Enter last name: Chaudhari
+Enter age: 20 
+Enter sex: Female
+Enter income: 50000 
+
+Enter your choice: 2
+Enter first name: Purva  
+Enter last name: chandratre
+Enter age: 19 
+Enter sex: Female
+Enter income: 503244 
+
+Enter your choice: 2
+Enter first name: Sakshi 
+Enter last name: Dhatrak
+Enter age: 18
+Enter sex: female
+Enter income: 789565 
+Enter your choice: 2
+
+Enter first name: kunal  
+Enter last name: nikam
+Enter age: 19 
+Enter sex: Male
+Enter income: 785625
+
+1.Create table: 
+2.Insert: 
+3.Show: 
+4.Update: 
+5.delete: 
+6.Exit 
+
+Enter your choice: 3 
+fname=Akshata,lname=Chaudhari,age=20,sex=Female,income=50000
+fname=Purva,lname=chandratre,age=19,sex=Female,income=503244
+fname=Sakshi,lname=Dhatrak,age=18,sex=Female,income=789565 
+fname=kunal,lname=nikam,age=19,sex=Male,income=785625
+ 
+1.Create table: 
+2.Insert: 
+3.Show: 
+4.Update: 
+5.delete: 
+6.Exit 
+Enter your choice: 4 
+
+1.Create table: 
+2.Insert: 
+3.Show: 
+4.Update: 
+5.delete: 
+6.Exit 
+
+Enter your choice: 3 
+fname=Akshata,lname=Chaudhari,age=20,sex=Female,income=50000
+fname=Purva,lname=chandratre,age=19,sex=Female,income=503244
+fname=Sakshi,lname=Dhatrak,age=18,sex=Female,income=789565 
+fname=kunal,lname=nikam,age=20,sex=Male,income=785625
+
+1.Create table: 
+2.Insert: 
+3.Show: 
+4.Update: 
+5.delete: 
+6.Exit 
+Enter your choice: 5 
+
+1.Create table: 
+2.Insert: 
+3.Show: 
+4.Update: 
+5.delete: 
+6.Exit 
+Enter your choice: 6 
+gescoe@gescoe-OptiPlex-3010:~/Desktop$ 
+
+
+
+'''
+*/           
